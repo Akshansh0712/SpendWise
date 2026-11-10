@@ -1,0 +1,13 @@
+{
+  "name": "spinewise",
+  "version": "1.0.0",
+  "description": "SpendWise is a responsive personal finance and expense analytics platform designed to help users track income, manage expenses, set monthly budgets, and understand their financial habits through interactive reports.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
