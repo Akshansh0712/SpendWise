@@ -113,5 +113,16 @@ async function login(req, res) {
     });
   }
 }
+async function getMe(req, res) {
+  return res.json({
+    success: true,
+    user: {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      currency: req.user.currency,
+    },
+  });
+}
 
-module.exports = { register, login };
+module.exports = { register, login, getMe };
