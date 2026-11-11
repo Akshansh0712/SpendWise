@@ -19,6 +19,30 @@ SpendWise gives every user a private financial workspace where they can:
 
 The application uses a vanilla HTML, CSS, and JavaScript frontend with a Node.js and Express.js REST API, MongoDB database, JWT authentication, and Chart.js visualizations.
 
+## Current status
+
+SpendWise is a work in progress.
+
+### Implemented backend
+
+- User registration and login using JWT
+- Protected profile and password-change routes
+- Transaction creation, listing, editing, and deletion
+- Transaction search, filters, sorting, and pagination
+- Monthly and category budgets
+- Dashboard and analytics API endpoints
+- Transaction CSV export
+- Input validation, security headers, and authentication rate limiting
+
+### In progress
+
+- Frontend pages and Chart.js integration
+- Further API and security testing
+- Production deployment and configuration
+
+The project roadmap and folder structure below describe planned work as well
+as implemented features.
+
 ## Technology Stack
 
 ### Frontend
@@ -338,3 +362,62 @@ Resume description:
 
 The project should be presented as a complete product rather than only a collection of screens. Screenshots, a live demo, clear API documentation, security notes, and a short walkthrough will make it substantially stronger for recruiters and technical interviews.
 
+## Run the backend locally
+
+### Requirements
+
+- Node.js 22 or another compatible supported version
+- npm
+- A MongoDB Atlas cluster or local MongoDB server
+
+### Setup
+
+1. Install backend dependencies:
+
+   ```powershell
+   cd backend
+   npm install
+   ```
+
+2. Create a `.env` file in the project root. Use your own values:
+
+   ```env
+   NODE_ENV=development
+   PORT=5000
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_long_random_secret
+   JWT_EXPIRES_IN=1h
+   CLIENT_URL=http://localhost:5500
+   ```
+
+3. Start the server from the `backend` folder:
+
+   ```powershell
+   npm start
+   ```
+
+4. Open the health endpoint in your browser:
+
+   ```text
+   http://localhost:5000/api/health
+   ```
+
+Never commit the real `.env` file, database credentials, JWT secrets,
+or exported financial records.
+
+## Run API tests
+
+Start the backend in one terminal. In another terminal, go to the
+`backend` folder and run:
+
+```powershell
+npm test
+```
+
+The integration test connects to the running API and creates two test
+accounts in the configured MongoDB database. Use a separate test database.
+
+On a successful run, it deletes its test transaction and budget. The test
+accounts remain because account deletion is not yet implemented.
+
+The tests do not cover every endpoint or production deployment setting.

@@ -1,29 +1,43 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 const User = require("../models/User");
 
-// Create a new user account
+function publicUser(user) {
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    currency: user.currency,
+  };
+}
+
+function validationFailed(req, res) {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    res.status(400).json({
+      success: false,
+      message: errors.array()[0].msg,
+    });
+
+    return true;
+  }
+
+  return false;
+}
+
 async function register(req, res) {
   try {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Name, email, and password are required",
-      });
+    if (validationFailed(req, res)) {
+      return;
     }
 
-    if (password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 8 characters",
-      });
-    }
+    const name = req.body.name.trim();
+    const email = req.body.email.trim().toLowerCase();
+    const { password } = req.body;
 
-    const existingUser = await User.findOne({
-      email: email.trim().toLowerCase(),
-    });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(409).json({
@@ -43,14 +57,24 @@ async function register(req, res) {
     return res.status(201).json({
       success: true,
       message: "Account created successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        currency: user.currency,
-      },
+      user: publicUser(user),
     });
   } catch (error) {
+    // Handles two registrations submitted at nearly the same time.
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "An account with this email already exists",
+      });
+    }
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: "Please check your account details",
+      });
+    }
+
     console.error("Registration error:", error.message);
 
     return res.status(500).json({
@@ -60,21 +84,17 @@ async function register(req, res) {
   }
 }
 
-// Log in an existing user
 async function login(req, res) {
   try {
-    const { email, password } = req.body;
-
-    if (typeof email !== "string" || typeof password !== "string") {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
+    if (validationFailed(req, res)) {
+      return;
     }
 
-    const user = await User.findOne({
-      email: email.trim().toLowerCase(),
-    }).select("+password");
+    const email = req.body.email.trim().toLowerCase();
+    const { password } = req.body;
+
+    const user = await User.findOne({ email })
+      .select("+password +tokenVersion");
 
     const passwordMatches = user
       ? await bcrypt.compare(password, user.password)
@@ -88,21 +108,22 @@ async function login(req, res) {
     }
 
     const token = jwt.sign(
-      { userId: user._id.toString() },
+      {
+        userId: user._id.toString(),
+        tokenVersion: user.tokenVersion ?? 0,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+      {
+        algorithm: "HS256",
+        expiresIn: process.env.JWT_EXPIRES_IN || "1h",
+      }
     );
 
     return res.json({
       success: true,
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        currency: user.currency,
-      },
+      user: publicUser(user),
     });
   } catch (error) {
     console.error("Login error:", error.message);
@@ -113,15 +134,11 @@ async function login(req, res) {
     });
   }
 }
+
 async function getMe(req, res) {
   return res.json({
     success: true,
-    user: {
-      id: req.user._id,
-      name: req.user.name,
-      email: req.user.email,
-      currency: req.user.currency,
-    },
+    user: publicUser(req.user),
   });
 }
 

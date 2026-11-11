@@ -139,8 +139,13 @@ async function changePassword(req, res) {
         password: user.password,
       },
       {
-        password: hashedPassword,
-      },
+        $set: {
+            password: hashedPassword,
+        },
+        $inc: {
+            tokenVersion: 1,
+        },
+      },      
       {
         new: true,
         runValidators: true,

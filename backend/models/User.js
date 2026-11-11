@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "INR",
     },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+      min: 0,
+      select: false,
+    },
   },
   { timestamps: true }
 );

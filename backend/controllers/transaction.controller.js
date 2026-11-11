@@ -77,6 +77,38 @@ async function getTransactions(req, res) {
       limit = "10",
     } = req.query;
 
+    const queryValues = [
+      search,
+      type,
+      category,
+      startDate,
+      endDate,
+      sortBy,
+      order,
+      page,
+      limit,
+    ];
+    
+    if (
+      queryValues.some(
+        (value) => value !== undefined && typeof value !== "string"
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Query parameters must be text values",
+      });
+    }
+    
+    if (
+      (search && search.length > 100) ||
+      (category && category.length > 50)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Search or category value is too long",
+      });
+    }
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
 
