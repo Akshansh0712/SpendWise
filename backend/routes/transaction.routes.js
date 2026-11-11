@@ -5,10 +5,12 @@ const {
   getTransactions,
   updateTransaction,
   deleteTransaction,
+  getSummary,
 } = require("../controllers/transaction.controller");
 
 const router = express.Router();
 
+router.get("/summary", protect, getSummary);
 router.post("/", protect, createTransaction);
 router.get("/", protect, getTransactions);
 router.put("/:id", protect, updateTransaction);

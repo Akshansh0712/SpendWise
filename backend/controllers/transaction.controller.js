@@ -285,10 +285,47 @@ async function deleteTransaction(req, res) {
     });
   }
 }
+async function getSummary(req, res) {
+  try {
+    const totals = await Transaction.aggregate([
+      {
+        $match: {
+          userId: req.user._id,
+        },
+      },
+      {
+        $group: {
+          _id: "$type",
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    const income = totals.find((item) => item._id === "income")?.total || 0;
+    const expenses = totals.find((item) => item._id === "expense")?.total || 0;
+
+    return res.json({
+      success: true,
+      summary: {
+        income,
+        expenses,
+        savings: income - expenses,
+      },
+    });
+  } catch (error) {
+    console.error("Summary error:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to calculate summary",
+    });
+  }
+}
 
 module.exports = {
   createTransaction,
   getTransactions,
   updateTransaction,
   deleteTransaction,
+  getSummary,
 };
