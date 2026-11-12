@@ -21,35 +21,45 @@ The application uses a vanilla HTML, CSS, and JavaScript frontend with a Node.js
 
 ## Current status
 
-SpendWise is a work in progress.
+SpendWise is complete as a working **college and portfolio MVP**. The
+frontend and backend are deployed and connected to MongoDB Atlas.
 
-### Implemented backend
+### Live project
 
-- User registration and login using JWT
-- Protected profile and password-change routes
-- Transaction creation, listing, editing, and deletion
-- Transaction search, filters, sorting, and pagination
-- Monthly and category budgets
-- Dashboard and analytics API endpoints
-- Transaction CSV export
-- Input validation, security headers, and authentication rate limiting
+- [Open SpendWise](https://spendwise-frontend-on8z.onrender.com)
+- [Backend health check](https://spendwise-backend-dxhj.onrender.com/api/health)
 
-### Frontend and demo
+### Implemented features
 
 - Responsive landing, registration, and login pages
-- Dashboard, transactions, budgets, analytics, reports, and settings
-- Chart.js visualizations and authenticated CSV downloads
-- [Live frontend](https://spendwise-frontend-on8z.onrender.com/) and [backend health check](https://spendwise-backend-dxhj.onrender.com/api/health)
+- JWT authentication and protected routes
+- Income and expense transaction management
+- Transaction search, filters, sorting, and pagination
+- Monthly and category-based budgets
+- Dashboard summaries and Chart.js visualizations
+- Spending, savings, and budget analytics
+- Filtered CSV transaction export
+- Profile updates and password changes
+- Input validation, security headers, and authentication rate limiting
 
-### Remaining before production use
+### Testing
 
-- Complete accessibility, browser, and end-to-end testing
-- Verify deployed Atlas indexes and production rate-limit/proxy configuration
-- Review token storage, account recovery, and operational security
-- Add the optional features and remaining filters listed in the roadmap
+The backend has an automated integration test covering core authentication,
+transaction, budget, analytics, CSV export, and account-isolation flows.
+Key frontend flows have also been tested locally and on the live site.
 
-The project roadmap and folder structure below describe planned work as well
-as implemented features.
+### Future improvements
+
+- Complete the production security and deployment review
+- Expand automated frontend and API test coverage
+- Add custom analytics date ranges and month-over-month comparisons
+- Improve account recovery and session management
+- Add optional features such as recurring transactions and savings goals
+
+This project is intended as a learning and portfolio application. It has
+not yet undergone a complete production security review and should not be
+used for sensitive financial data without further hardening.
+
 
 ## Technology Stack
 
