@@ -1,4 +1,8 @@
-const API_BASE = 'http://localhost:5000/api';
+// Local pages use the local backend; deployed pages use the Render service.
+const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_BASE = isLocal
+  ? 'http://localhost:5000/api'
+  : 'https://spendwise-backend-dxhj.onrender.com/api';
 const TOKEN_KEY = 'spendwise_token';
 export const getToken = () => sessionStorage.getItem(TOKEN_KEY);
 export const setToken = token => sessionStorage.setItem(TOKEN_KEY, token);
