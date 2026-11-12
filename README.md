@@ -34,11 +34,19 @@ SpendWise is a work in progress.
 - Transaction CSV export
 - Input validation, security headers, and authentication rate limiting
 
-### In progress
+### Frontend and demo
 
-- Frontend pages and Chart.js integration
-- Further API and security testing
-- Production deployment and configuration
+- Responsive landing, registration, and login pages
+- Dashboard, transactions, budgets, analytics, reports, and settings
+- Chart.js visualizations and authenticated CSV downloads
+- [Live frontend](https://spendwise-frontend-on8z.onrender.com/) and [backend health check](https://spendwise-backend-dxhj.onrender.com/api/health)
+
+### Remaining before production use
+
+- Complete accessibility, browser, and end-to-end testing
+- Verify deployed Atlas indexes and production rate-limit/proxy configuration
+- Review token storage, account recovery, and operational security
+- Add the optional features and remaining filters listed in the roadmap
 
 The project roadmap and folder structure below describe planned work as well
 as implemented features.
@@ -75,7 +83,12 @@ as implemented features.
 - Vercel or Netlify for the frontend
 - Render or another Node.js host for the backend
 
-## Final Project Structure
+## Proposed Project Structure
+
+This is the original plan, not an inventory of the current files. The current
+frontend uses `frontend/html/` for pages and `frontend/js/app.js` for the
+dashboard views. The backend implementation is organized under its existing
+`controllers`, `models`, `routes`, `middleware`, and `utils` folders.
 
 ```text
 SpendWise/
@@ -179,7 +192,6 @@ Stores the authenticated user reference, month, year, total spending limit, and 
 ```text
 POST   /api/auth/register
 POST   /api/auth/login
-POST   /api/auth/logout
 GET    /api/auth/me
 
 GET    /api/users/profile
@@ -188,7 +200,6 @@ PUT    /api/users/change-password
 
 POST   /api/transactions
 GET    /api/transactions
-GET    /api/transactions/:id
 PUT    /api/transactions/:id
 DELETE /api/transactions/:id
 GET    /api/transactions/summary
@@ -360,7 +371,34 @@ Resume description:
 
 > Built SpendWise, a responsive personal finance analytics platform using vanilla JavaScript, Node.js, Express.js, MongoDB, and Chart.js, with JWT authentication, transaction CRUD operations, monthly budgeting, interactive reports, CSV exports, validation, and user-specific data protection.
 
-The project should be presented as a complete product rather than only a collection of screens. Screenshots, a live demo, clear API documentation, security notes, and a short walkthrough will make it substantially stronger for recruiters and technical interviews.
+Screenshots, a live demo, clear API documentation, security notes, and a short walkthrough can help explain the project to recruiters and interviewers. Describe the functionality that has actually been implemented and tested.
+
+## Run the frontend locally
+
+With the backend running, open another terminal:
+
+```powershell
+cd frontend
+node serve.cjs
+```
+
+Visit `http://localhost:5500`. The frontend uses the local backend on port
+5000 for localhost, and the configured Render backend when hosted. The
+backend `CLIENT_URL` must match the frontend origin. Chart.js and fonts load
+from external CDNs and need an internet connection.
+
+The browser stores the access token in session storage. Logging out removes
+it from that browser session; this is not server-side token revocation.
+Tokens are accessible to JavaScript, so XSS protections and a production
+authentication review remain important. The API's password-change operation
+invalidates earlier tokens.
+
+## Data and reports
+
+MongoDB stores user, transaction, and budget records in the database specified
+by `MONGODB_URI`. CSV reports are generated for the authenticated user and
+sent to the browser; the backend does not save a report file. Downloads may
+contain financial information and should not be committed to Git.
 
 ## Run the backend locally
 
