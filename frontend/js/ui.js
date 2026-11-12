@@ -1,0 +1,6 @@
+export const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const money = (n, currency='INR') => { try { return new Intl.NumberFormat('en-IN',{style:'currency',currency,maximumFractionDigits:2}).format(Number(n)||0); } catch { return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(Number(n)||0); } };
+export const date = value => new Intl.DateTimeFormat('en-IN',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'}).format(new Date(value));
+export function toast(message, isError=false) { const el=document.querySelector('#toast'); el.textContent=message; el.className=isError?'error':''; el.hidden=false; clearTimeout(el.timer); el.timer=setTimeout(()=>el.hidden=true,4000); }
+export function modal(title, html, onSubmit) { const dialog=document.querySelector('#modal'); document.querySelector('#modal-title').textContent=title; const content=document.querySelector('#modal-content'); content.innerHTML=html; content.querySelector('form')?.addEventListener('submit',onSubmit); dialog.showModal(); }
+document.querySelector('#close-modal')?.addEventListener('click',()=>document.querySelector('#modal').close());
